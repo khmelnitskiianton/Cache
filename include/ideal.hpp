@@ -1,6 +1,7 @@
 #ifndef INCLUDE_IDEAL_HPP
 #define INCLUDE_IDEAL_HPP
 
+#include <cstdint>
 #include <iostream>
 #include <list>
 #include <ostream>

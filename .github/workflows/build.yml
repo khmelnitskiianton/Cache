@@ -5,8 +5,10 @@ name: Cache
 
 on:
   [push, pull_request]
+
 env:
   BUILD_TYPE: Debug
+  GCC_VERSION: 10
   DEBIAN_FRONTEND: noninteractive
   TZ: Etc/UTC
 
@@ -19,50 +21,57 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
+    - name: Check repo
+      uses: actions/checkout@v4
 
     - name: Install dependencies
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y --no-install-recommends \
-          build-essential \
-          cmake \
-          ninja-build \
-          g++ gcc libstdc++-dev \
-          clang lld clang-format \
-          python3
-        sudo apt-get install libgtest-dev libgmock-dev libtbb-dev
+      uses: ./.github/actions/setup-deps
 
     - name: Configure cmake
-      run: > 
-        cmake -G Ninja 
-              -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
-              -DCMAKE_C_COMPILER=clang 
-              -DCMAKE_CXX_COMPILER=clang++ 
-              -DLLVM_USE_LINKER=lld
-              -B build
+      run: |
+        cmake -G Ninja \
+              -S . \
+              -B build \
+              -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
+              -DCMAKE_C_COMPILER=clang \
+              -DCMAKE_CXX_COMPILER=clang++ \
+              -DBUILD_TESTING=ON \
               -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
 
     - name: Build with cmake
       run: cmake --build build
 
+    - name: Archive build
+      run: tar -czf build-debug.tar.gz -C build .
+
     - name: Upload debug build artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: build-debug
-        path: build/
+        name: build-debug-tar
+        path: build-debug.tar.gz
         retention-days: 7
 
   unittests:
     needs: build
     runs-on: ubuntu-latest
-    
+
     steps:
+    - name: Check repo
+      uses: actions/checkout@v4
+  
+    - name: Install dependencies
+      uses: ./.github/actions/setup-deps
+    
     - name: Download debug build artifacts
       uses: actions/download-artifact@v4
       with:
-        name: build-debug
-        path: build/
+        name: build-debug-tar
+        path: .
+
+    - name: Unarchive build
+      run: |
+        mkdir -p build
+        tar -xzf build-debug.tar.gz -C build
 
     - name: GTests
       run: ctest --test-dir build/tests --output-on-failure

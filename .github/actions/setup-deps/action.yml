@@ -1,0 +1,23 @@
+# This workflow will install dependencies for project.
+
+name: "Setup build deps"
+
+description: "Install packages needed for build & tests"
+
+runs:
+  using: "composite"
+
+  steps:
+    - shell: bash
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y --no-install-recommends \
+          build-essential \
+          cmake \
+          ninja-build \
+          gcc-${GCC_VERSION} \
+          g++-${GCC_VERSION} \
+          libstdc++-${GCC_VERSION}-dev \
+          clang lld clang-format \
+          python3 \
+          libgtest-dev libgmock-dev libtbb-dev
