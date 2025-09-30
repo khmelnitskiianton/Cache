@@ -1,0 +1,12 @@
+BasedOnStyle: LLVM
+AccessModifierOffset: 2
+IndentAccessModifiers: true
+AlignAfterOpenBracket: Align
+AlignConsecutiveAssignments: false
+AllowAllArgumentsOnNextLine: false
+ColumnLimit: 130
+IndentWidth: 2
+ContinuationIndentWidth: 4
+MaxEmptyLinesToKeep: 2
+TabWidth: 2
+UseTab: Never
