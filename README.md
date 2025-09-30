@@ -8,17 +8,28 @@ Realisation of the cache in three algorithms: LRU, LFU and Belady's optimal algo
 
 ## Dependencies
 
-compiler c/c++, cmake, python, gtest
+Compiler c/c++(clang preferable), cmake, python, gtest
 
 ```shell
-apt-get install clang make cmake python3
+apt-get install build-essential clang ninja-build make cmake python3
 apt-get install libgtest-dev libgmock-dev libtbb-dev
 ```
 
-## Build
+## Building
 
+### Config
+
+*Debug:*
 ```shell
 cmake -G Ninja -DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_CXX_COMPILER=clang++ -S . -B build
+```
+*Release:*
+```shell
+cmake -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=clang++ -S . -B build
+```
+
+### Build
+```
 cmake --build build
 ```
 

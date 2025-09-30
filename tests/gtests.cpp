@@ -18,28 +18,34 @@
 #include <gtest/gtest.h>
 
 static constexpr auto test_name_pattern_ = "^test_[0-9]+\\.txt$";
+static constexpr auto test_number_pattern_ = R"(^test_(\d{6})\.txt$)";
+static constexpr auto lru_keys_filename = "lru.txt";
+static constexpr auto ideal_keys_filename = "ideal.txt";
 
 std::filesystem::path tests_dir_{TESTS_DIR};
 std::filesystem::path keys_dir_{KEYS_DIR};
 
-std::ifstream lru_keys;
-std::ifstream ideal_keys;
-
-void PrepareKeys() {
-  std::filesystem::path lru_keys_path = keys_dir_ / "lru.txt";
-  std::filesystem::path ideal_keys_path = keys_dir_ / "ideal.txt";
+size_t GetTestKey(std::string test_file, std::string keys_file_name) {
+  size_t number_of_test = 1;
+  std::string test_file_name = std::filesystem::path(test_file).filename();
+  static const std::regex pat(test_number_pattern_);
+  std::smatch m;
+  if (std::regex_match(test_file_name, m, pat)) {
+      number_of_test = static_cast<unsigned>(std::stoul(m[1].str()));
+  }
+  size_t key_hits = 0;
+  std::ifstream keys_stream;
+  std::filesystem::path keys_path = keys_dir_ / std::filesystem::path(keys_file_name);
   try {
-    IOWrap::TryOpenFile(lru_keys, lru_keys_path.string());
+    IOWrap::TryOpenFile(keys_stream, keys_path.string());
+    for (size_t i = 0; i < number_of_test; i++) {
+      IOWrap::GetFromInput<size_t>(&key_hits, keys_stream);
+    }
   } catch (const std::ios_base::failure &e) {
-    std::cerr << "Can't read keys for test in " << lru_keys_path << " with error: " << e.what();
+    std::cerr << "Can't read keys for test in " << keys_path << " with error: " << e.what();
     std::exit(EXIT_FAILURE);
   }
-  try {
-    IOWrap::TryOpenFile(ideal_keys, ideal_keys_path.string());
-  } catch (const std::ios_base::failure &e) {
-    std::cerr << "Can't read keys for test in " << ideal_keys_path << " with error: " << e.what();
-    std::exit(EXIT_FAILURE);
-  }
+  return key_hits;
 }
 
 std::vector<std::string> GetTestsInDir() {
@@ -88,7 +94,7 @@ TEST_P(CacheTest, LRUCacheTest) {
   // Get expected and compare
   size_t hits_expected = 0;
   try {
-    IOWrap::GetFromInput(&hits_expected, lru_keys);
+    hits_expected = GetTestKey(file, lru_keys_filename);
   } catch (const std::ios_base::failure &e) {
     FAIL() << "Problem in key data: " << e.what() << std::endl;
   }
@@ -129,7 +135,7 @@ TEST_P(CacheTest, IdealCacheTest) {
   // Get expected and compare
   size_t hits_expected = 0;
   try {
-    IOWrap::GetFromInput(&hits_expected, ideal_keys);
+    hits_expected = GetTestKey(file, ideal_keys_filename);
   } catch (const std::ios_base::failure &e) {
     FAIL() << "Problem in key data: " << e.what() << std::endl;
   }
@@ -139,9 +145,6 @@ TEST_P(CacheTest, IdealCacheTest) {
 INSTANTIATE_TEST_SUITE_P(E2ETests, CacheTest, ::testing::ValuesIn(GetTestsInDir()));
 
 int main(int argc, char **argv) {
-  std::cout << "Tests dir: " << tests_dir_ << std::endl;
-  std::cout << "Key dir: " << keys_dir_ << std::endl;
-  PrepareKeys();
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
 }

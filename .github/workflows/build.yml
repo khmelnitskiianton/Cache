@@ -1,0 +1,68 @@
+# This workflow will install dependencies, build project and
+# run tests.
+
+name: Cache
+
+on:
+  [push, pull_request]
+env:
+  BUILD_TYPE: Debug
+  DEBIAN_FRONTEND: noninteractive
+  TZ: Etc/UTC
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y --no-install-recommends \
+          build-essential \
+          cmake \
+          ninja-build \
+          g++ gcc libstdc++-dev \
+          clang lld clang-format \
+          python3
+        sudo apt-get install libgtest-dev libgmock-dev libtbb-dev
+
+    - name: Configure cmake
+      run: > 
+        cmake -G Ninja 
+              -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+              -DCMAKE_C_COMPILER=clang 
+              -DCMAKE_CXX_COMPILER=clang++ 
+              -DLLVM_USE_LINKER=lld
+              -B build
+              -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+
+    - name: Build with cmake
+      run: cmake --build build
+
+    - name: Upload debug build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: build-debug
+        path: build/
+        retention-days: 7
+
+  unittests:
+    needs: build
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Download debug build artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: build-debug
+        path: build/
+
+    - name: GTests
+      run: ctest --test-dir build/tests --output-on-failure

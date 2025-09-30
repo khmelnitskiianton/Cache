@@ -1,3 +1,5 @@
+enable_testing()
+
 include(FetchContent)
 FetchContent_Declare(
   googletest
@@ -6,8 +8,6 @@ FetchContent_Declare(
 )
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
-
-enable_testing()
 
 get_filename_component(TESTS_DIR "${PROJECT_SOURCE_DIR}/tests/tests" ABSOLUTE)
 get_filename_component(KEYS_DIR  "${PROJECT_SOURCE_DIR}/tests/keys"  ABSOLUTE)
@@ -23,9 +23,7 @@ target_link_libraries(
     gtests  
     PRIVATE
     GTest::gtest
-    GTest::gtest_main
     GTest::gmock
-    GTest::gmock_main
 )
 
 include(GoogleTest)
