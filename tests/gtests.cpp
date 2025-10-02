@@ -12,6 +12,7 @@
 #include "ideal.hpp"
 #include "io_wrap.hpp"
 #include "lru.hpp"
+#include "lfu.hpp"
 #include "page.hpp"
 
 #include <gmock/gmock.h>
@@ -21,6 +22,7 @@ static constexpr auto test_name_pattern_ = "^test_[0-9]+\\.txt$";
 static constexpr auto test_number_pattern_ = R"(^test_(\d{6})\.txt$)";
 static constexpr auto lru_keys_filename = "lru.txt";
 static constexpr auto ideal_keys_filename = "ideal.txt";
+static constexpr auto lfu_keys_filename = "lfu.txt";
 
 std::filesystem::path tests_dir_{TESTS_DIR};
 std::filesystem::path keys_dir_{KEYS_DIR};
@@ -101,6 +103,40 @@ TEST_P(CacheTest, LRUCacheTest) {
   ASSERT_EQ(hits, hits_expected);
 }
 
+TEST_P(CacheTest, LFUCacheTest) {
+  std::string file = GetParam();
+  std::ifstream cache_in;
+
+  size_t cache_size = 0, data_amount = 0;
+  try {
+    IOWrap::TryOpenFile(cache_in, file);
+    IOWrap::GetFromInput<size_t>(&cache_size, cache_in);
+    IOWrap::GetFromInput<size_t>(&data_amount, cache_in);
+  } catch (const std::ios_base::failure &e) {
+    FAIL() << "Problem in getting data: " << e.what() << std::endl;
+  }
+  LFUCache::Cache<Page, size_t> ccache{cache_size};
+  size_t hits = 0;
+  try {
+    for (size_t i = 0; i < data_amount; i++) {
+      Page curr_page;
+      IOWrap::GetFromInput<size_t>(&curr_page.id, cache_in);
+      if (ccache.LookUpUpdate<Page (*)(size_t)>(curr_page.id, &Page::slow_get_page)) {
+        hits++;
+      }
+    }
+  } catch (const std::ios_base::failure &e) {
+    FAIL() << "Bad input in data: " << e.what() << std::endl;
+  }
+  // Get expected and compare
+  size_t hits_expected = 0;
+  try {
+    hits_expected = GetTestKey(file, lfu_keys_filename);
+  } catch (const std::ios_base::failure &e) {
+    FAIL() << "Problem in key data: " << e.what() << std::endl;
+  }
+  ASSERT_EQ(hits, hits_expected);
+}
 
 TEST_P(CacheTest, IdealCacheTest) {
   std::string file = GetParam();

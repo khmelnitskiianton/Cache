@@ -11,8 +11,6 @@ namespace IdealCache {
 
 template <typename T, typename KeyT> class Cache {
     using CacheListIt = typename std::list<std::pair<KeyT, T>>::iterator;
-    using CacheMapIt = typename std::unordered_map<KeyT, CacheListIt>::iterator;
-    using FutureListIt = typename std::list<KeyT>::iterator;
 
   private:
     std::list<KeyT> future_;
@@ -21,7 +19,7 @@ template <typename T, typename KeyT> class Cache {
     std::list<std::pair<KeyT, T>> cache_;
     std::unordered_map<KeyT, CacheListIt> cache_map_;
 
-    void CacheFarestFuture(KeyT &farest_key) {
+    void FindFarestFuture(KeyT &farest_key) {
       KeyT best_key = cache_.front().first;
       size_t best_pos = 0;
       bool initialized = false;
@@ -29,6 +27,7 @@ template <typename T, typename KeyT> class Cache {
         const KeyT &k = kv.first;
         size_t pos = NextUseIndex(k);
         if (pos == SIZE_MAX) {
+          // Case we have key that will not appear
           farest_key = k;
           return;
         }
@@ -44,6 +43,7 @@ template <typename T, typename KeyT> class Cache {
     bool InCache(KeyT key) const { return cache_map_.find(key) != cache_map_.end(); }
 
     size_t NextUseIndex(const KeyT &key) const {
+      // Find when key will appear another time 
       size_t idx = 0;
       for (const auto &k : future_) {
         if (k == key)
@@ -63,17 +63,21 @@ template <typename T, typename KeyT> class Cache {
     void UpdateFuture() { future_.pop_front(); }
 
     template <typename F> bool LookUpUpdate(KeyT key, F slow_get_page) {
+      if (size_ == 0)
+        return false;
+      
       auto hit = cache_map_.find(key);
-      // case no page in cache
+      // Case no page in cache
       if (hit == cache_map_.end()) {
         if (Full()) {
           // Find rarest and remove it
           KeyT latest_in_future;
-          CacheFarestFuture(latest_in_future);
+          FindFarestFuture(latest_in_future);
           auto it = cache_map_.find(latest_in_future);
           cache_.erase(it->second);
           cache_map_.erase(it);
         }
+        // Emplace new at the front
         cache_.emplace_front(key, slow_get_page(key));
         cache_map_.emplace(key, cache_.begin());
         UpdateFuture();

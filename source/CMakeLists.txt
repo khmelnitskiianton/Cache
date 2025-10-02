@@ -1,22 +1,22 @@
 set(LRU_TARGET cache_lru)
+set(LFU_TARGET cache_lfu)
 set(IDEAL_TARGET cache_ideal)
-set(ARC_TARGET cache_arc)
 
 set(LRU_SOURCES 
     ${PROJECT_SOURCE_DIR}/source/lru.cpp
    )
+set(LFU_SOURCES 
+   ${PROJECT_SOURCE_DIR}/source/lfu.cpp
+  )
 set(IDEAL_SOURCES
     ${PROJECT_SOURCE_DIR}/source/ideal.cpp
    )
-set(ARC_SOURCES 
-    ${PROJECT_SOURCE_DIR}/source/arc.cpp
-   )
 
-set(CACHE_TARGETS ${LRU_TARGET} ${IDEAL_TARGET} ${ARC_TARGET})
+set(CACHE_TARGETS ${LRU_TARGET} ${IDEAL_TARGET} ${LFU_TARGET})
 
 add_executable(${LRU_TARGET} ${LRU_SOURCES})
 add_executable(${IDEAL_TARGET} ${IDEAL_SOURCES})
-add_executable(${ARC_TARGET} ${ARC_SOURCES})
+add_executable(${LFU_TARGET} ${LFU_SOURCES})
 
 foreach(t IN LISTS CACHE_TARGETS)
     target_include_directories(${t} PUBLIC "${PROJECT_SOURCE_DIR}/include")

@@ -23,6 +23,7 @@ int main() {
         hits++;
       }
     }
+    // ccache.Dump();
   } catch (const std::ios_base::failure &e) {
     std::cerr << "Bad input in data: " << e.what() << std::endl;
     return 0;

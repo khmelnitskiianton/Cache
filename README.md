@@ -1,10 +1,19 @@
 # Cache
 
-Realisation of the cache in three algorithms: LRU, LFU and Belady's optimal algorithm.
+Realisation of the cache in three algorithms: 
+- LRU (Least recently used)
+- LFU (Least frequently used)
+- Ideal (Belady's optimal algorithm)
 
-## Comparing
+## Comparing cache perfomance
 
+Overall results:
 
+![](.github/images/results.png)
+
+Comparing LFU vs LRU:
+
+![](.github/images/lru_vs_lfu.png)
 
 ## Dependencies
 
@@ -37,14 +46,20 @@ Binaries are located in `build/bin/cache_*`
 
 ## Tests
 
-Sources of tests are located in `tests/` and script for generating random tests in `tests/gen_tests.py` - dont forget to write  answers in `keys/*.txt`
+Sources of tests are located in `tests/` and script for generating random tests and run caches on it in `tests/gen_tests.py`.
 
 ```shell
-python tests/tests.py --outdir tests --tests 5 --min-cache 2 --max-cache 8 --min-n 30 --max-n 60 --min-key 5 --max-key 20
+python3 ./tests/gen_tests.py --outdir data_test --tests 1000 --bin-dir build/bin --key-dir keys
 ```
 
 Google Tests, for run do:
 
 ```shell
-./build/gtests
+ctest --test-dir build/tests --output-on-failure
 ```
+
+## Workflow
+
+Pipeline runs in 2 stages:
+- `build`: debug build project & create artifact.
+- `tests`: run tests for build

@@ -51,7 +51,7 @@ jobs:
         path: build-debug.tar.gz
         retention-days: 7
 
-  unittests:
+  tests:
     needs: build
     runs-on: ubuntu-latest
 

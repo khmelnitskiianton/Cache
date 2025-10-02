@@ -1,4 +1,4 @@
-#include "arc.hpp"
+#include "lfu.hpp"
 #include "io_wrap.hpp"
 #include "page.hpp"
 #include <iostream>
@@ -13,19 +13,20 @@ int main() {
     return 0;
   }
 
-  ARCCache::Cache<Page, size_t> ccache{cache_size};
+  LFUCache::Cache<Page, size_t> ccache{cache_size};
 
   size_t hits = 0;
 
   try {
     for (size_t i = 0; i < data_amount; i++) {
-      ccache.Dump();
+      //ccache.Dump();
       Page curr_page;
-      std::cin >> curr_page.id;
+      IOWrap::GetFromInput<size_t>(&curr_page.id, std::cin);
       if (ccache.LookUpUpdate<Page (*)(size_t)>(curr_page.id, &Page::slow_get_page)) {
         hits++;
       }
     }
+    //ccache.Dump();
   } catch (const std::ios_base::failure &e) {
     std::cerr << "Bad input in data: " << e.what() << std::endl;
     return 0;
