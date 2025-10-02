@@ -5,16 +5,6 @@ Realisation of the cache in three algorithms:
 - LFU (Least frequently used)
 - Ideal (Belady's optimal algorithm)
 
-## Comparing cache perfomance
-
-Overall results:
-
-![](.github/images/results.png)
-
-Comparing LFU vs LRU:
-
-![](.github/images/lru_vs_lfu.png)
-
 ## Dependencies
 
 Compiler c/c++(clang preferable), cmake, python, gtest
@@ -57,6 +47,16 @@ Google Tests, for run do:
 ```shell
 ctest --test-dir build/tests --output-on-failure
 ```
+
+## Comparing cache perfomance
+
+Overall results:
+
+![](.github/images/results.png)
+
+Comparing LFU vs LRU:
+
+![](.github/images/lru_vs_lfu.png)
 
 ## Workflow
 
