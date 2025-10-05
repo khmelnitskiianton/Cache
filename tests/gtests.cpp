@@ -11,8 +11,8 @@
 
 #include "ideal.hpp"
 #include "io_wrap.hpp"
-#include "lru.hpp"
 #include "lfu.hpp"
+#include "lru.hpp"
 #include "page.hpp"
 
 #include <gmock/gmock.h>
@@ -33,7 +33,7 @@ size_t GetTestKey(std::string test_file, std::string keys_file_name) {
   static const std::regex pat(test_number_pattern_);
   std::smatch m;
   if (std::regex_match(test_file_name, m, pat)) {
-      number_of_test = static_cast<unsigned>(std::stoul(m[1].str()));
+    number_of_test = static_cast<unsigned>(std::stoul(m[1].str()));
   }
   size_t key_hits = 0;
   std::ifstream keys_stream;
@@ -151,19 +151,21 @@ TEST_P(CacheTest, IdealCacheTest) {
     FAIL() << "Bad input in sizes: " << e.what() << std::endl;
   }
   IdealCache::Cache<Page, size_t> ccache{cache_size};
-  std::list<Page> queue;
+  std::vector<Page> future_queue;
+  std::vector<size_t> future_keys;
   try {
-    for (size_t i = 0; i < data_amount; i++) {
+    for (size_t i = 0; i < data_amount; ++i) {
       Page curr_page;
       IOWrap::GetFromInput<size_t>(&curr_page.id, cache_in);
-      ccache.AddFuture(curr_page.id);
-      queue.emplace_back(curr_page);
+      future_queue.emplace_back(curr_page);
+      future_keys.emplace_back(curr_page.id);
     }
   } catch (const std::ios_base::failure &e) {
     FAIL() << "Bad input in data: " << e.what() << std::endl;
   }
+  ccache.SetStream(future_keys);
   size_t hits = 0;
-  for (std::list<Page>::iterator queue_it = queue.begin(); queue_it != queue.end(); ++queue_it) {
+  for (std::vector<Page>::iterator queue_it = future_queue.begin(); queue_it != future_queue.end(); ++queue_it) {
     if (ccache.LookUpUpdate<Page (*)(size_t)>(queue_it->id, &Page::slow_get_page)) {
       hits++;
     }

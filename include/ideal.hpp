@@ -5,7 +5,9 @@
 #include <iostream>
 #include <list>
 #include <ostream>
+#include <queue>
 #include <unordered_map>
+#include <vector>
 
 namespace IdealCache {
 
@@ -13,7 +15,9 @@ template <typename T, typename KeyT> class Cache {
     using CacheListIt = typename std::list<std::pair<KeyT, T>>::iterator;
 
   private:
-    std::list<KeyT> future_;
+    // Access stream and future indices
+    std::vector<KeyT> stream_;
+    std::unordered_map<KeyT, std::queue<size_t>> future_;
 
     size_t size_;
     std::list<std::pair<KeyT, T>> cache_;
@@ -40,17 +44,12 @@ template <typename T, typename KeyT> class Cache {
       farest_key = best_key;
     }
 
-    bool InCache(KeyT key) const { return cache_map_.find(key) != cache_map_.end(); }
-
     size_t NextUseIndex(const KeyT &key) const {
-      // Find when key will appear another time 
-      size_t idx = 0;
-      for (const auto &k : future_) {
-        if (k == key)
-          return idx;
-        ++idx;
-      }
-      return SIZE_MAX;
+      // Find when key will appear next time
+      auto it = future_.find(key);
+      if (it == future_.end() || it->second.empty())
+        return SIZE_MAX;
+      return it->second.front();
     }
 
     bool Full() const { return cache_.size() == size_; }
@@ -58,17 +57,36 @@ template <typename T, typename KeyT> class Cache {
   public:
     Cache(size_t size) : size_(size) {}
 
-    void AddFuture(KeyT key) { future_.emplace_back(key); }
+    void SetStream(std::vector<KeyT> stream) {
+      stream_ = std::move(stream);
+      for (size_t i = 0; i < stream_.size(); ++i) {
+        future_[stream_[i]].push(i);
+      }
+    }
 
-    void UpdateFuture() { future_.pop_front(); }
+    void UpdateFuture(const KeyT &key) {
+      auto &q = future_[key];
+      if (!q.empty())
+        q.pop(); // consume the "now"
+    }
 
     template <typename F> bool LookUpUpdate(KeyT key, F slow_get_page) {
       if (size_ == 0)
         return false;
-      
+
+      // Update queue
+      UpdateFuture(key);
+
       auto hit = cache_map_.find(key);
       // Case no page in cache
       if (hit == cache_map_.end()) {
+        // Bypass with single object
+        size_t next_use = NextUseIndex(key);
+        if (next_use == SIZE_MAX) {
+          slow_get_page(key);
+          return false;
+        }
+
         if (Full()) {
           // Find rarest and remove it
           KeyT latest_in_future;
@@ -80,7 +98,6 @@ template <typename T, typename KeyT> class Cache {
         // Emplace new at the front
         cache_.emplace_front(key, slow_get_page(key));
         cache_map_.emplace(key, cache_.begin());
-        UpdateFuture();
         return false;
       }
       // case page in cache
@@ -88,7 +105,6 @@ template <typename T, typename KeyT> class Cache {
       if (find_it != cache_.begin()) {
         cache_.splice(cache_.begin(), cache_, find_it);
       }
-      UpdateFuture();
       return true;
     }
 

@@ -14,20 +14,22 @@ int main() {
     return 0;
   }
   IdealCache::Cache<Page, size_t> ccache{cache_size};
-  std::list<Page> queue;
+  std::vector<Page> future_queue;
+  std::vector<size_t> future_keys;
   try {
     for (size_t i = 0; i < data_amount; i++) {
       Page curr_page;
       IOWrap::GetFromInput<size_t>(&curr_page.id, std::cin);
-      ccache.AddFuture(curr_page.id);
-      queue.emplace_back(curr_page);
+      future_queue.emplace_back(curr_page);
+      future_keys.emplace_back(curr_page.id);
     }
   } catch (const std::ios_base::failure &e) {
     std::cerr << "Bad input in data: " << e.what() << std::endl;
     return 0;
   }
+  ccache.SetStream(future_keys);
   size_t hits = 0;
-  for (std::list<Page>::iterator queue_it = queue.begin(); queue_it != queue.end(); ++queue_it) {
+  for (std::vector<Page>::iterator queue_it = future_queue.begin(); queue_it != future_queue.end(); ++queue_it) {
     // ccache.Dump();
     if (ccache.LookUpUpdate<Page (*)(size_t)>(queue_it->id, &Page::slow_get_page)) {
       hits++;

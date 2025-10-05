@@ -1,6 +1,6 @@
 # Cache
 
-Realisation of the cache in three algorithms: 
+Researching and analysing the cache performance of three algorithms:
 - LRU (Least recently used)
 - LFU (Least frequently used)
 - Ideal (Belady's optimal algorithm)
@@ -48,7 +48,7 @@ Google Tests, for run do:
 ctest --test-dir build/tests --output-on-failure
 ```
 
-## Comparing cache perfomance
+## Comparing cache's perfomance
 
 Overall results:
 
