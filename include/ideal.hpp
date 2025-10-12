@@ -11,7 +11,7 @@
 
 namespace IdealCache {
 
-template <typename T, typename KeyT> class Cache {
+template <typename KeyT, typename T> class Cache {
     using CacheListIt = typename std::list<std::pair<KeyT, T>>::iterator;
 
   private:

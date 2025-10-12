@@ -13,7 +13,7 @@ int main() {
     return 0;
   }
 
-  LFUCache::Cache<Page, size_t> ccache{cache_size};
+  LFUCache::Cache<size_t, Page> ccache{cache_size};
 
   size_t hits = 0;
 

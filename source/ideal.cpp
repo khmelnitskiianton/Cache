@@ -13,7 +13,7 @@ int main() {
     std::cerr << "Bad input in sizes: " << e.what() << std::endl;
     return 0;
   }
-  IdealCache::Cache<Page, size_t> ccache{cache_size};
+  IdealCache::Cache<size_t, Page> ccache{cache_size};
   std::vector<Page> future_queue;
   std::vector<size_t> future_keys;
   try {

@@ -12,7 +12,7 @@ int main() {
     std::cerr << "Bad input in sizes: " << e.what() << std::endl;
     return 0;
   }
-  LRUCache::Cache<Page, size_t> ccache{cache_size};
+  LRUCache::Cache<size_t, Page> ccache{cache_size};
   size_t hits = 0;
   try {
     for (size_t i = 0; i < data_amount; i++) {

@@ -7,7 +7,7 @@
 
 namespace LRUCache {
 
-template <typename T, typename KeyT> class Cache {
+template <typename KeyT, typename T> class Cache {
     using ListIt = typename std::list<std::pair<KeyT, T>>::iterator;
 
   private:

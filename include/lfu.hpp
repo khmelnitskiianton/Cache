@@ -8,7 +8,7 @@
 
 namespace LFUCache {
 
-template <typename T, typename KeyT> class Cache {
+template <typename KeyT, typename T> class Cache {
   private:
     struct CacheNode;
   
@@ -33,7 +33,7 @@ template <typename T, typename KeyT> class Cache {
       // Add new node to list with freq + 1 list in the beginning, LRU strategy
       CacheNode move_node = *find_page;
       move_node.freq++;
-      freq_cache_map_[move_node.freq].emplace_front(move_node);
+      freq_cache_map_[move_node.freq].push_front(move_node);
       
       // Update cache_map_ with new iterator
       cache_map_[move_node.key] = freq_cache_map_[move_node.freq].begin();
@@ -56,7 +56,7 @@ template <typename T, typename KeyT> class Cache {
       std::list<CacheNode> &min_freq_list = freq_cache_map_[lowest_freq];
       
       // Remove node from cache_map_
-      KeyT key_removed_node = min_freq_list.back().key;
+      KeyT &key_removed_node = min_freq_list.back().key;
       cache_map_.erase(key_removed_node);
 
       // Remove from it LRU node and remove list if it becomes empty
@@ -66,7 +66,7 @@ template <typename T, typename KeyT> class Cache {
       }
     }
 
-    template <typename F> void AddNewNode(KeyT key, F slow_get_page) {
+    template <typename F> void AddNewNode(KeyT &key, F slow_get_page) {
       // Create node and push to map with 1 frequency in front of list - LRU startegy 
       freq_cache_map_[1].emplace_front(CacheNode {key, slow_get_page(key)});
       cache_map_.emplace(key, freq_cache_map_[1].begin());
@@ -75,7 +75,7 @@ template <typename T, typename KeyT> class Cache {
   public:
     Cache(size_t size) : size_(size) {}
     
-    template <typename F> bool LookUpUpdate(KeyT key, F slow_get_page) {
+    template <typename F> bool LookUpUpdate(KeyT &key, F slow_get_page) {
       if (size_ == 0)
         return false;
 

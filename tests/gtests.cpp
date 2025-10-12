@@ -4,8 +4,6 @@
 #include <ostream>
 #include <regex>
 
-#include <bits/getopt_core.h>
-#include <getopt.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -80,7 +78,7 @@ TEST_P(CacheTest, LRUCacheTest) {
   } catch (const std::ios_base::failure &e) {
     FAIL() << "Problem in getting data: " << e.what() << std::endl;
   }
-  LRUCache::Cache<Page, size_t> ccache{cache_size};
+  LRUCache::Cache<size_t, Page> ccache{cache_size};
   size_t hits = 0;
   try {
     for (size_t i = 0; i < data_amount; i++) {
@@ -115,7 +113,7 @@ TEST_P(CacheTest, LFUCacheTest) {
   } catch (const std::ios_base::failure &e) {
     FAIL() << "Problem in getting data: " << e.what() << std::endl;
   }
-  LFUCache::Cache<Page, size_t> ccache{cache_size};
+  LFUCache::Cache<size_t, Page> ccache{cache_size};
   size_t hits = 0;
   try {
     for (size_t i = 0; i < data_amount; i++) {
@@ -150,7 +148,7 @@ TEST_P(CacheTest, IdealCacheTest) {
   } catch (const std::ios_base::failure &e) {
     FAIL() << "Bad input in sizes: " << e.what() << std::endl;
   }
-  IdealCache::Cache<Page, size_t> ccache{cache_size};
+  IdealCache::Cache<size_t, Page> ccache{cache_size};
   std::vector<Page> future_queue;
   std::vector<size_t> future_keys;
   try {
