@@ -76,5 +76,5 @@ jobs:
     - name: GTests
       run: ctest --test-dir build/tests --output-on-failure
 
-    - name: PythonRun
+    - name: PyTests
       run: python3 tests/run_tests.py --lru-bin build/bin/cache_lru --lfu-bin build/bin/cache_lfu --ideal-bin build/bin/cache_ideal

@@ -59,6 +59,12 @@ Google Tests, for run do:
 ctest --test-dir build/tests --output-on-failure
 ```
 
+Python Tests, for run do:
+
+```shell
+python3 tests/run_tests.py --lru-bin build/bin/cache_lru --lfu-bin build/bin/cache_lfu --ideal-bin build/bin/cache_ideal
+```
+
 ## Comparing cache's perfomance
 
 Overall results:
