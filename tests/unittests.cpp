@@ -13,7 +13,6 @@
 #include "lru.hpp"
 #include "page.hpp"
 
-#include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
 static constexpr auto test_name_pattern_ = "^test_[0-9]+\\.txt$";
@@ -39,7 +38,7 @@ size_t GetTestKey(std::string test_file, std::string keys_file_name) {
   try {
     IOWrap::TryOpenFile(keys_stream, keys_path.string());
     for (size_t i = 0; i < number_of_test; i++) {
-      IOWrap::GetFromInput<size_t>(&key_hits, keys_stream);
+      IOWrap::GetFromInput(key_hits, keys_stream);
     }
   } catch (const std::ios_base::failure &e) {
     std::cerr << "Can't read keys for test in " << keys_path << " with error: " << e.what();
@@ -73,8 +72,8 @@ TEST_P(CacheTest, LRUCacheTest) {
   size_t cache_size = 0, data_amount = 0;
   try {
     IOWrap::TryOpenFile(cache_in, file);
-    IOWrap::GetFromInput<size_t>(&cache_size, cache_in);
-    IOWrap::GetFromInput<size_t>(&data_amount, cache_in);
+    IOWrap::GetFromInput(cache_size, cache_in);
+    IOWrap::GetFromInput(data_amount, cache_in);
   } catch (const std::ios_base::failure &e) {
     FAIL() << "Problem in getting data: " << e.what() << std::endl;
   }
@@ -83,8 +82,8 @@ TEST_P(CacheTest, LRUCacheTest) {
   try {
     for (size_t i = 0; i < data_amount; i++) {
       Page curr_page;
-      IOWrap::GetFromInput<size_t>(&curr_page.id, cache_in);
-      if (ccache.LookUpUpdate<Page (*)(size_t)>(curr_page.id, &Page::slow_get_page)) {
+      IOWrap::GetFromInput(curr_page.id, cache_in);
+      if (ccache.LookUpUpdate(curr_page.id, Page::slow_get_page)) {
         hits++;
       }
     }
@@ -108,8 +107,8 @@ TEST_P(CacheTest, LFUCacheTest) {
   size_t cache_size = 0, data_amount = 0;
   try {
     IOWrap::TryOpenFile(cache_in, file);
-    IOWrap::GetFromInput<size_t>(&cache_size, cache_in);
-    IOWrap::GetFromInput<size_t>(&data_amount, cache_in);
+    IOWrap::GetFromInput(cache_size, cache_in);
+    IOWrap::GetFromInput(data_amount, cache_in);
   } catch (const std::ios_base::failure &e) {
     FAIL() << "Problem in getting data: " << e.what() << std::endl;
   }
@@ -118,8 +117,8 @@ TEST_P(CacheTest, LFUCacheTest) {
   try {
     for (size_t i = 0; i < data_amount; i++) {
       Page curr_page;
-      IOWrap::GetFromInput<size_t>(&curr_page.id, cache_in);
-      if (ccache.LookUpUpdate<Page (*)(size_t)>(curr_page.id, &Page::slow_get_page)) {
+      IOWrap::GetFromInput(curr_page.id, cache_in);
+      if (ccache.LookUpUpdate(curr_page.id, Page::slow_get_page)) {
         hits++;
       }
     }
@@ -143,8 +142,8 @@ TEST_P(CacheTest, IdealCacheTest) {
   size_t cache_size = 0, data_amount = 0;
   try {
     IOWrap::TryOpenFile(cache_in, file);
-    IOWrap::GetFromInput<size_t>(&cache_size, cache_in);
-    IOWrap::GetFromInput<size_t>(&data_amount, cache_in);
+    IOWrap::GetFromInput(cache_size, cache_in);
+    IOWrap::GetFromInput(data_amount, cache_in);
   } catch (const std::ios_base::failure &e) {
     FAIL() << "Bad input in sizes: " << e.what() << std::endl;
   }
@@ -154,7 +153,7 @@ TEST_P(CacheTest, IdealCacheTest) {
   try {
     for (size_t i = 0; i < data_amount; ++i) {
       Page curr_page;
-      IOWrap::GetFromInput<size_t>(&curr_page.id, cache_in);
+      IOWrap::GetFromInput(curr_page.id, cache_in);
       future_queue.emplace_back(curr_page);
       future_keys.emplace_back(curr_page.id);
     }
@@ -164,7 +163,7 @@ TEST_P(CacheTest, IdealCacheTest) {
   ccache.SetStream(future_keys);
   size_t hits = 0;
   for (std::vector<Page>::iterator queue_it = future_queue.begin(); queue_it != future_queue.end(); ++queue_it) {
-    if (ccache.LookUpUpdate<Page (*)(size_t)>(queue_it->id, &Page::slow_get_page)) {
+    if (ccache.LookUpUpdate(queue_it->id, Page::slow_get_page)) {
       hits++;
     }
   }

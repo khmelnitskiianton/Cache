@@ -73,8 +73,8 @@ jobs:
         mkdir -p build
         tar -xzf build-debug.tar.gz -C build
 
-    - name: GTests
+    - name: UnitTests
       run: ctest --test-dir build/tests --output-on-failure
 
-    - name: PyTests
+    - name: End2EndTests
       run: python3 tests/run_tests.py --lru-bin build/bin/cache_lru --lfu-bin build/bin/cache_lfu --ideal-bin build/bin/cache_ideal

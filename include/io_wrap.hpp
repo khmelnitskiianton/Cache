@@ -5,9 +5,9 @@
 
 namespace IOWrap {
 
-template <typename T> void GetFromInput(T *arg, std::istream &input) {
+template <typename T> void GetFromInput(T &arg, std::istream &input) {
   input.exceptions(std::istream::failbit | std::istream::badbit); // enable cin throw exceptions.
-  input >> *arg;
+  input >> arg;
 }
 
 template <typename T> void TryOpenFile(std::ifstream &input, const T &arg) {

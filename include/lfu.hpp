@@ -93,7 +93,7 @@ template <typename KeyT, typename T> class Cache {
       return true;
     }
 
-    void Dump() {
+    void Dump() const  {
       std::cout << "########" << std::endl;
       size_t index = 0;
       for (CacheMapIt cache_it = freq_cache_map_.begin(); cache_it != freq_cache_map_.end(); ++cache_it, ++index) {

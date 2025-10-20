@@ -26,7 +26,6 @@ template <typename KeyT, typename T> class Cache {
     void FindFarestFuture(KeyT &farest_key) {
       KeyT best_key = cache_.front().first;
       size_t best_pos = 0;
-      bool initialized = false;
       for (const auto &kv : cache_) {
         const KeyT &k = kv.first;
         size_t pos = NextUseIndex(k);
@@ -35,10 +34,9 @@ template <typename KeyT, typename T> class Cache {
           farest_key = k;
           return;
         }
-        if (!initialized || pos > best_pos) {
+        if (pos > best_pos) {
           best_pos = pos;
           best_key = k;
-          initialized = true;
         }
       }
       farest_key = best_key;
@@ -70,7 +68,7 @@ template <typename KeyT, typename T> class Cache {
         q.pop(); // consume the "now"
     }
 
-    template <typename F> bool LookUpUpdate(KeyT key, F slow_get_page) {
+    template <typename F> bool LookUpUpdate(KeyT &key, F slow_get_page) {
       if (size_ == 0)
         return false;
 

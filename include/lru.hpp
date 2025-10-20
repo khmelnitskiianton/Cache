@@ -20,7 +20,7 @@ template <typename KeyT, typename T> class Cache {
   public:
     Cache(size_t size) : size_(size) {}
 
-    template <typename F> bool LookUpUpdate(KeyT key, F slow_get_page) {
+    template <typename F> bool LookUpUpdate(KeyT &key, F slow_get_page) {
       if (size_ == 0)
         return false;
 
@@ -43,7 +43,7 @@ template <typename KeyT, typename T> class Cache {
       return true;
     }
 
-    void Dump() {
+    void Dump() const {
       std::cout << "########" << std::endl;
       size_t index = 0;
       for (ListIt it = cache_.begin(); it != cache_.end(); ++it, ++index) {
