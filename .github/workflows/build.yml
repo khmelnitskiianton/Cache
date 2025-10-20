@@ -35,7 +35,7 @@ jobs:
               -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
               -DCMAKE_C_COMPILER=clang \
               -DCMAKE_CXX_COMPILER=clang++ \
-              -DBUILD_TESTING=ON \
+              -DBUILD_TESTS=ON -DSANITIZE=ON \
               -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
 
     - name: Build with cmake
