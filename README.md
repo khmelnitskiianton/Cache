@@ -2,7 +2,7 @@
 
 [![MIPT](https://img.shields.io/endpoint?style=plastic&url=https%3A%2F%2Fraw.githubusercontent.com%2Fkhmelnitskiianton%2FCache%2Fmain%2F.github%2Fbadge%2Fmipt-badge.json)](#)
 
-[![License](https://img.shields.io/github/license/khmelnitskiianton/mega-humidifier)](#)
+[![License](https://img.shields.io/github/license/khmelnitskiianton/Cache)](#)
 [![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-2088FF?logo=github-actions&logoColor=white)](#)
 
 [![C++](https://img.shields.io/badge/C++-%2300599C.svg?logo=c%2B%2B&logoColor=white)](#)
@@ -51,6 +51,18 @@ cmake --build build
 ```
 
 Binaries are located in `build/bin/cache_*`
+
+## Usage 
+
+Input from stdin consist of `<size of cache> <amount of requests> <requests keys>`
+
+Output is amount of cache hits.
+
+```
+4 12 1 2 3 4 1 2 5 1 2 4 3 4
+```
+
+Output: `6` (for LFU/LRU) or `7` (for ideal)
 
 ## Tests
 
