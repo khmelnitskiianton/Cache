@@ -147,7 +147,6 @@ TEST_P(CacheTest, IdealCacheTest) {
   } catch (const std::ios_base::failure &e) {
     FAIL() << "Bad input in sizes: " << e.what() << '\n';
   }
-  IdealCache::Cache<size_t, Page> ccache{cache_size};
   std::vector<Page> future_queue;
   std::vector<size_t> future_keys;
   try {
@@ -160,7 +159,7 @@ TEST_P(CacheTest, IdealCacheTest) {
   } catch (const std::ios_base::failure &e) {
     FAIL() << "Bad input in data: " << e.what() << '\n';
   }
-  ccache.SetStream(future_keys);
+  IdealCache::Cache<size_t, Page> ccache{cache_size, future_keys};
   size_t hits = 0;
   for (std::vector<Page>::iterator queue_it = future_queue.begin(); queue_it != future_queue.end(); ++queue_it) {
     if (ccache.LookUpUpdate(queue_it->id, Page::slow_get_page)) {

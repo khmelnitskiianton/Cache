@@ -52,9 +52,7 @@ template <typename KeyT, typename T> class Cache {
     bool Full() const { return cache_.size() == size_; }
 
   public:
-    Cache(size_t size) : size_(size) {}
-
-    void SetStream(std::vector<KeyT> stream) {
+    Cache(const size_t size, const std::vector<KeyT> &stream) : size_(size) {
       for (size_t i = 0; i < stream.size(); ++i) {
         future_[stream[i]].push(i);
       }

@@ -10,7 +10,7 @@ int main() {
     IOWrap::GetFromInput(data_amount, std::cin);
   } catch (const std::ios_base::failure &e) {
     std::cerr << "Bad input in sizes: " << e.what() << '\n';
-    return 0;
+    return EXIT_FAILURE;
   }
   LRUCache::Cache<size_t, Page> ccache{cache_size};
   size_t hits = 0;
@@ -26,7 +26,7 @@ int main() {
     // ccache.Dump();
   } catch (const std::ios_base::failure &e) {
     std::cerr << "Bad input in data: " << e.what() << '\n';
-    return 0;
+    return EXIT_FAILURE;
   }
   std::cout << hits << '\n';
   return 0;

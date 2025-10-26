@@ -1,6 +1,7 @@
 #include "ideal.hpp"
 #include "io_wrap.hpp"
 #include "page.hpp"
+#include <cstdlib>
 #include <iostream>
 #include <ostream>
 
@@ -11,9 +12,8 @@ int main() {
     IOWrap::GetFromInput(data_amount, std::cin);
   } catch (const std::ios_base::failure &e) {
     std::cerr << "Bad input in sizes: " << e.what() << '\n';
-    return 0;
+    return EXIT_FAILURE;
   }
-  IdealCache::Cache<size_t, Page> ccache{cache_size};
   std::vector<Page> future_queue;
   std::vector<size_t> future_keys;
   try {
@@ -25,9 +25,9 @@ int main() {
     }
   } catch (const std::ios_base::failure &e) {
     std::cerr << "Bad input in data: " << e.what() << '\n';
-    return 0;
+    return EXIT_FAILURE;
   }
-  ccache.SetStream(future_keys);
+  IdealCache::Cache<size_t, Page> ccache{cache_size, future_keys};
   size_t hits = 0;
   for (std::vector<Page>::iterator queue_it = future_queue.begin(); queue_it != future_queue.end(); ++queue_it) {
     // ccache.Dump();
