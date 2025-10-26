@@ -10,7 +10,7 @@ int main() {
     IOWrap::GetFromInput(cache_size, std::cin);
     IOWrap::GetFromInput(data_amount, std::cin);
   } catch (const std::ios_base::failure &e) {
-    std::cerr << "Bad input in sizes: " << e.what() << std::endl;
+    std::cerr << "Bad input in sizes: " << e.what() << '\n';
     return 0;
   }
   IdealCache::Cache<size_t, Page> ccache{cache_size};
@@ -24,7 +24,7 @@ int main() {
       future_keys.emplace_back(curr_page.id);
     }
   } catch (const std::ios_base::failure &e) {
-    std::cerr << "Bad input in data: " << e.what() << std::endl;
+    std::cerr << "Bad input in data: " << e.what() << '\n';
     return 0;
   }
   ccache.SetStream(future_keys);
@@ -36,6 +36,6 @@ int main() {
     }
   }
   // ccache.Dump();
-  std::cout << hits << std::endl;
+  std::cout << hits << '\n';
   return 0;
 }

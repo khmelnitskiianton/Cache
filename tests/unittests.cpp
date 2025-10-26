@@ -75,7 +75,7 @@ TEST_P(CacheTest, LRUCacheTest) {
     IOWrap::GetFromInput(cache_size, cache_in);
     IOWrap::GetFromInput(data_amount, cache_in);
   } catch (const std::ios_base::failure &e) {
-    FAIL() << "Problem in getting data: " << e.what() << std::endl;
+    FAIL() << "Problem in getting data: " << e.what() << '\n';
   }
   LRUCache::Cache<size_t, Page> ccache{cache_size};
   size_t hits = 0;
@@ -88,14 +88,14 @@ TEST_P(CacheTest, LRUCacheTest) {
       }
     }
   } catch (const std::ios_base::failure &e) {
-    FAIL() << "Bad input in data: " << e.what() << std::endl;
+    FAIL() << "Bad input in data: " << e.what() << '\n';
   }
   // Get expected and compare
   size_t hits_expected = 0;
   try {
     hits_expected = GetTestKey(file, lru_keys_filename);
   } catch (const std::ios_base::failure &e) {
-    FAIL() << "Problem in key data: " << e.what() << std::endl;
+    FAIL() << "Problem in key data: " << e.what() << '\n';
   }
   ASSERT_EQ(hits, hits_expected);
 }
@@ -110,7 +110,7 @@ TEST_P(CacheTest, LFUCacheTest) {
     IOWrap::GetFromInput(cache_size, cache_in);
     IOWrap::GetFromInput(data_amount, cache_in);
   } catch (const std::ios_base::failure &e) {
-    FAIL() << "Problem in getting data: " << e.what() << std::endl;
+    FAIL() << "Problem in getting data: " << e.what() << '\n';
   }
   LFUCache::Cache<size_t, Page> ccache{cache_size};
   size_t hits = 0;
@@ -123,14 +123,14 @@ TEST_P(CacheTest, LFUCacheTest) {
       }
     }
   } catch (const std::ios_base::failure &e) {
-    FAIL() << "Bad input in data: " << e.what() << std::endl;
+    FAIL() << "Bad input in data: " << e.what() << '\n';
   }
   // Get expected and compare
   size_t hits_expected = 0;
   try {
     hits_expected = GetTestKey(file, lfu_keys_filename);
   } catch (const std::ios_base::failure &e) {
-    FAIL() << "Problem in key data: " << e.what() << std::endl;
+    FAIL() << "Problem in key data: " << e.what() << '\n';
   }
   ASSERT_EQ(hits, hits_expected);
 }
@@ -145,7 +145,7 @@ TEST_P(CacheTest, IdealCacheTest) {
     IOWrap::GetFromInput(cache_size, cache_in);
     IOWrap::GetFromInput(data_amount, cache_in);
   } catch (const std::ios_base::failure &e) {
-    FAIL() << "Bad input in sizes: " << e.what() << std::endl;
+    FAIL() << "Bad input in sizes: " << e.what() << '\n';
   }
   IdealCache::Cache<size_t, Page> ccache{cache_size};
   std::vector<Page> future_queue;
@@ -158,7 +158,7 @@ TEST_P(CacheTest, IdealCacheTest) {
       future_keys.emplace_back(curr_page.id);
     }
   } catch (const std::ios_base::failure &e) {
-    FAIL() << "Bad input in data: " << e.what() << std::endl;
+    FAIL() << "Bad input in data: " << e.what() << '\n';
   }
   ccache.SetStream(future_keys);
   size_t hits = 0;
@@ -172,7 +172,7 @@ TEST_P(CacheTest, IdealCacheTest) {
   try {
     hits_expected = GetTestKey(file, ideal_keys_filename);
   } catch (const std::ios_base::failure &e) {
-    FAIL() << "Problem in key data: " << e.what() << std::endl;
+    FAIL() << "Problem in key data: " << e.what() << '\n';
   }
   ASSERT_EQ(hits, hits_expected);
 }

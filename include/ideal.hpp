@@ -16,7 +16,6 @@ template <typename KeyT, typename T> class Cache {
 
   private:
     // Access stream and future indices
-    std::vector<KeyT> stream_;
     std::unordered_map<KeyT, std::queue<size_t>> future_;
 
     size_t size_;
@@ -56,9 +55,8 @@ template <typename KeyT, typename T> class Cache {
     Cache(size_t size) : size_(size) {}
 
     void SetStream(std::vector<KeyT> stream) {
-      stream_ = std::move(stream);
-      for (size_t i = 0; i < stream_.size(); ++i) {
-        future_[stream_[i]].push(i);
+      for (size_t i = 0; i < stream.size(); ++i) {
+        future_[stream[i]].push(i);
       }
     }
 
@@ -68,7 +66,7 @@ template <typename KeyT, typename T> class Cache {
         q.pop(); // consume the "now"
     }
 
-    template <typename F> bool LookUpUpdate(KeyT &key, F slow_get_page) {
+    template <typename F> bool LookUpUpdate(const KeyT &key, F slow_get_page) {
       if (size_ == 0)
         return false;
 
@@ -107,15 +105,15 @@ template <typename KeyT, typename T> class Cache {
     }
 
     void Dump() const {
-      std::cout << std::endl << "########" << std::endl;
-      std::cout << "Cache:" << std::endl;
+      std::cout << "\n########\n";
+      std::cout << "Cache:" << '\n';
       size_t index = 0;
       for (CacheListIt it = cache_.begin(); it != cache_.end(); ++it, ++index) {
         std::pair<KeyT, T> curr_pair = *it;
         std::cout << "[" << index << "]["
-                  << "key: " << curr_pair.first << "]" << std::endl;
+                  << "key: " << curr_pair.first << "]\n";
       }
-      std::cout << "########" << std::endl << std::endl;
+      std::cout << "########\n\n";
     }
 };
 

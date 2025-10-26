@@ -20,7 +20,7 @@ template <typename KeyT, typename T> class Cache {
   public:
     Cache(size_t size) : size_(size) {}
 
-    template <typename F> bool LookUpUpdate(KeyT &key, F slow_get_page) {
+    template <typename F> bool LookUpUpdate(const KeyT &key, F slow_get_page) {
       if (size_ == 0)
         return false;
 
@@ -44,14 +44,14 @@ template <typename KeyT, typename T> class Cache {
     }
 
     void Dump() const {
-      std::cout << "########" << std::endl;
+      std::cout << "\n########\n";
       size_t index = 0;
       for (ListIt it = cache_.begin(); it != cache_.end(); ++it, ++index) {
         std::pair<KeyT, T> curr_pair = *it;
         std::cout << "[" << index << "]["
-                  << "key: " << curr_pair.first << "]" << std::endl;
+                  << "key: " << curr_pair.first << "]\n";
       }
-      std::cout << "########" << std::endl;
+      std::cout << "########\n\n";
     }
 };
 

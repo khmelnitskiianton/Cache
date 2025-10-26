@@ -9,7 +9,7 @@ int main() {
     IOWrap::GetFromInput(cache_size, std::cin);
     IOWrap::GetFromInput(data_amount, std::cin);
   } catch (const std::ios_base::failure &e) {
-    std::cerr << "Bad input in sizes: " << e.what() << std::endl;
+    std::cerr << "Bad input in sizes: " << e.what() << '\n';
     return 0;
   }
 
@@ -19,18 +19,18 @@ int main() {
 
   try {
     for (size_t i = 0; i < data_amount; i++) {
-      //ccache.Dump();
+      // ccache.Dump();
       Page curr_page;
       IOWrap::GetFromInput(curr_page.id, std::cin);
       if (ccache.LookUpUpdate(curr_page.id, Page::slow_get_page)) {
         hits++;
       }
     }
-    //ccache.Dump();
+    // ccache.Dump();
   } catch (const std::ios_base::failure &e) {
-    std::cerr << "Bad input in data: " << e.what() << std::endl;
+    std::cerr << "Bad input in data: " << e.what() << '\n';
     return 0;
   }
-  std::cout << hits << std::endl;
+  std::cout << hits << '\n';
   return 0;
 }
