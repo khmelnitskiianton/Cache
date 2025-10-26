@@ -50,10 +50,10 @@ template <typename KeyT, typename T> class Cache {
 
     void RemoveLowFreq() {
       // Find in map list with minimal frequency
-      Frequency lowest_freq =
-          (*std::min_element(freq_cache_map_.begin(), freq_cache_map_.end(), [](const auto &l, const auto &r) {
-            return l.first < r.first;
-          })).first;
+      Frequency lowest_freq
+          = (*std::min_element(freq_cache_map_.begin(), freq_cache_map_.end(), [](const auto &l, const auto &r) {
+              return l.first < r.first;
+            })).first;
       std::list<CacheNode> &min_freq_list = freq_cache_map_[lowest_freq];
 
       // Remove node from cache_map_

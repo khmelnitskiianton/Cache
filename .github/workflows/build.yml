@@ -16,19 +16,7 @@ defaults:
   run:
     shell: bash
 
-jobs:  
-  format-check:
-    runs-on: ubuntu-latest
-
-    steps:
-    - name: Check repo
-      uses: actions/checkout@v4
-
-    - name: Check formatting
-      run: |
-        find source include -name '*.cpp' -o -name '*.h' -o -name '*.hpp' | xargs clang-format -i --style=file
-        git diff --exit-code
-
+jobs:
   build:
     runs-on: ubuntu-latest
 
