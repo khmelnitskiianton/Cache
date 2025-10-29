@@ -52,11 +52,16 @@ template <typename KeyT, typename T> class Cache {
     bool Full() const { return cache_.size() == size_; }
 
   public:
-    Cache(const size_t size, const std::vector<KeyT> &stream) : size_(size) {
-      for (size_t i = 0; i < stream.size(); ++i) {
-        future_[stream[i]].push(i);
+    template <typename It>
+    Cache(const size_t size, It first, It last) : size_(size) {
+      size_t i = 0;
+      for (auto it = first; it != last ; ++it, ++i) {
+        future_[*it].push(i);
       }
     }
+    template <typename C>
+    Cache(const size_t size, const C& container) 
+      : Cache(size, std::begin(container), std::end(container)) {}
 
     void UpdateFuture(const KeyT &key) {
       auto &q = future_[key];

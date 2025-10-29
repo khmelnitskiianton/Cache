@@ -29,7 +29,7 @@ int main() {
   }
   IdealCache::Cache<size_t, Page> ccache{cache_size, future_keys};
   size_t hits = 0;
-  for (std::vector<Page>::iterator queue_it = future_queue.begin(); queue_it != future_queue.end(); ++queue_it) {
+  for (auto queue_it = future_queue.begin(); queue_it != future_queue.end(); ++queue_it) {
     // ccache.Dump();
     if (ccache.LookUpUpdate(queue_it->id, Page::slow_get_page)) {
       hits++;
